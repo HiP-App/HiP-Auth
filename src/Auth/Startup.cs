@@ -47,6 +47,15 @@ namespace Auth
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            // Register the OpenIddict services, including the default Entity Framework stores.
+            services.AddOpenIddict<ApplicationUser, ApplicationDbContext>().Configure(options =>
+            {
+                // During development, you can disable the HTTPS requirement.
+                options.AllowInsecureHttp = true;
+                options.ClaimsIssuer = "http://localhost:1702";
+                options.UseJwtTokens();
+            });                
+
             services.AddMvc();
 
             // Add application services.
@@ -74,6 +83,8 @@ namespace Auth
             app.UseStaticFiles();
 
             app.UseIdentity();
+
+            app.UseOpenIddict();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
