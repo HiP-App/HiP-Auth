@@ -18,7 +18,10 @@
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0-rc2-final",
-    "Microsoft.EntityFrameworkCore.SqlServer": "1.0.0-rc2-final",
+    "Microsoft.EntityFrameworkCore.Relational": "1.0.0-rc2-final",
+    "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.0-rc2-release1",
+    "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "1.0.0-rc2-release1",
+    "Npgsql": "3.1.1",
     "Microsoft.EntityFrameworkCore.Tools": {
       "version": "1.0.0-preview1-final",
       "type": "build"
