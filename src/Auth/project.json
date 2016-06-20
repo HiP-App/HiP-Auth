@@ -6,18 +6,12 @@
       "version": "1.0.0-rc2-3002702",
       "type": "platform"
     },
-    "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.Razor.Tools": {
-      "version": "1.0.0-preview1-final",
-      "type": "build"
-    },
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.StaticFiles": "1.0.0-rc2-final",
     "Microsoft.EntityFrameworkCore.Relational": "1.0.0-rc2-final",
     "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.0-rc2-release1",
     "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "1.0.0-rc2-release1",
@@ -45,10 +39,6 @@
   },
 
   "tools": {
-    "Microsoft.AspNetCore.Razor.Tools": {
-      "version": "1.0.0-preview1-final",
-      "imports": "portable-net45+win8+dnxcore50"
-    },
     "Microsoft.AspNetCore.Server.IISIntegration.Tools": {
       "version": "1.0.0-preview1-final",
       "imports": "portable-net45+win8+dnxcore50"
@@ -94,15 +84,12 @@
 
   "publishOptions": {
     "include": [
-      "wwwroot",
-      "Views",
       "appsettings.json",
       "web.config"
     ]
   },
 
   "scripts": {
-    "prepublish": [ "npm install", "bower install", "gulp clean", "gulp min" ],
     "postpublish": [ "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" ]
   }
 }
