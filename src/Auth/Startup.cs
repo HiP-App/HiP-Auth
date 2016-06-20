@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Auth.Data;
+using Auth.Models;
+using Auth.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,9 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Auth.Data;
-using Auth.Models;
-using Auth.Services;
+using System.IO;
 
 namespace Auth
 {
@@ -52,7 +49,6 @@ namespace Auth
             {
                 // During development, you can disable the HTTPS requirement.
                 options.AllowInsecureHttp = true;
-                options.ClaimsIssuer = "http://localhost:1702";
                 options.UseJwtTokens();
             });                
 
@@ -80,20 +76,25 @@ namespace Auth
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
-
             app.UseIdentity();
 
             app.UseOpenIddict();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
+        }
+
+        public static void Main(string[] args)
+        {
+            var host = new WebHostBuilder()
+                .UseKestrel()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseIISIntegration()
+                .UseStartup<Startup>()
+                .Build();
+
+            host.Run();
         }
     }
 }
