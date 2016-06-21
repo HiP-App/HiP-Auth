@@ -1,5 +1,6 @@
 ﻿using Auth.Data;
 using Auth.Models;
+using Auth.Models.AuthViewModels;
 using Auth.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
 using System.IO;
 
 namespace Auth
@@ -50,7 +53,14 @@ namespace Auth
                 // During development, you can disable the HTTPS requirement.
                 options.AllowInsecureHttp = true;
                 options.UseJwtTokens();
-            });                
+            });
+
+            //Add Set the Admin Credentials from appsettings to a POCO Object
+            services.Configure<LoginViewModel>(myoptions =>
+            {
+                myoptions.Email = Configuration.GetSection("AppCredentials:Admin:Username").Value;
+                myoptions.Password = Configuration.GetSection("AppCredentials:Admin:Password").Value;
+            });
 
             services.AddMvc();
 
@@ -60,7 +70,7 @@ namespace Auth
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider, ApplicationDbContext dbContext)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -83,6 +93,10 @@ namespace Auth
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc();
+
+            //Call to create Admin
+            StartupTasks user = new StartupTasks();
+            user.CreateSuperuser(dbContext, serviceProvider, app.ApplicationServices.GetService<IOptions<LoginViewModel>>());
         }
 
         public static void Main(string[] args)
