@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using OpenIddict.Models;
 using System;
 using System.IO;
 
@@ -49,9 +48,13 @@ namespace Auth
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders()
-                .AddOpenIddictCore<Application>(config => config.UseEntityFramework());
-           
+                .AddDefaultTokenProviders();
+
+            // add OpenIddict
+            services.AddOpenIddict<ApplicationUser, ApplicationDbContext>()
+                .DisableHttpsRequirement()
+                .UseJsonWebTokens();
+
             //Add Set the Admin Credentials from appsettings to a POCO Object
             services.Configure<LoginViewModel>(myoptions =>
             {
@@ -94,16 +97,9 @@ namespace Auth
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseIdentity();
+            //app.UseIdentity();
 
-            app.UseOpenIddictCore(builder =>
-            {
-                // tell openiddict you're wanting to use jwt tokens
-                builder.Options.UseJwtTokens();
-                // NOTE: for dev consumption only! for live, this is not encouraged!
-                builder.Options.AllowInsecureHttp = true;
-                builder.Options.ApplicationCanDisplayErrors = true;
-            });
+            app.UseOpenIddict();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 

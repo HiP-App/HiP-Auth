@@ -26,10 +26,6 @@ namespace Auth.Data
                 };
                 userManager.CreateAsync(admin, userCredentials.Value.Password);
             }
-
-            // Assigning Superuser role if user admin already exists.
-            if (!(userManager.IsInRoleAsync(admin, "Administrator").Result))
-                userManager.AddToRoleAsync(admin, "Administrator");
         }
     }
 }
