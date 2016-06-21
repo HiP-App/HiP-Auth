@@ -39,6 +39,9 @@ namespace Auth
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Adding Cross Origin Requests 
+            services.AddCors();
+
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
@@ -77,6 +80,14 @@ namespace Auth
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseCors(builder =>
+                // This will allow any request from any server. Tweak to fit your needs!
+                // The fluent API is pretty pleasant to work with.
+                builder.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin()
+            );
 
             if (env.IsDevelopment())
             {
