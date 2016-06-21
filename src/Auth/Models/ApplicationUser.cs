@@ -1,9 +1,9 @@
-﻿using OpenIddict;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Auth.Models
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
-    public class ApplicationUser : OpenIddictUser
+    public class ApplicationUser : IdentityUser
     {
     }
 }

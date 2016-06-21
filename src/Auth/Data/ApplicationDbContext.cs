@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Auth.Models;
 using OpenIddict;
+using OpenIddict.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Auth.Data
 {
-    public class ApplicationDbContext : OpenIddictContext<ApplicationUser>
+    public class ApplicationDbContext : OpenIddictContext<ApplicationUser, Application, IdentityRole , string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

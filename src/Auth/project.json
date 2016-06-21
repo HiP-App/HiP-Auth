@@ -16,7 +16,8 @@
     "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.0-rc2-release1",
     "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "1.0.0-rc2-release1",
     "Npgsql": "3.1.1",
-    "OpenIddict": "1.0.0-*",
+    "OpenIddict.Core": "1.0.0-alpha2-0288",
+    "OpenIddict.EF": "1.0.0-alpha2-0288",
     "Microsoft.EntityFrameworkCore.Tools": {
       "version": "1.0.0-preview1-final",
       "type": "build"
