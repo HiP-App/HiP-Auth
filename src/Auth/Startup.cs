@@ -67,6 +67,9 @@ namespace Auth
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            //swagger configurations
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,6 +96,12 @@ namespace Auth
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint
+            app.UseSwaggerGen();
+
+            // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
+            app.UseSwaggerUi();
 
             //Call to create Admin
             StartupTasks user = new StartupTasks();
