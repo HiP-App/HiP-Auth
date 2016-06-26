@@ -1,4 +1,4 @@
-﻿{
+{
   "userSecretsId": "aspnet-Auth-eb59e383-618e-4152-8bf2-28800a8d6272",
 
   "dependencies": {
@@ -37,7 +37,8 @@
       "type": "build"
     },
     "Swashbuckle.SwaggerGen": "6.0.0-beta9",
-    "Swashbuckle.SwaggerUi": "6.0.0-beta9"
+    "Swashbuckle.SwaggerUi": "6.0.0-beta9",
+    "Microsoft.Extensions.Configuration.Binder": "1.0.0-rc2-final"
   },
 
   "tools": {
