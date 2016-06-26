@@ -4,15 +4,12 @@ namespace Auth.Utility
 {
     public class AppConfig
     {
-        public string ClientId { get; set; }
-
         public bool AllowInsecureHttp { get; set; }
 
         public AdminCredentials AdminCredentials { get; set; }
 
         public AppConfig(IConfigurationRoot configuration)
         {
-            ClientId = configuration.GetValue<string>("ClientId");
             AllowInsecureHttp = configuration.GetValue<bool>("Configurations:AllowInsecureHttp");
             
             AdminCredentials = new AdminCredentials
