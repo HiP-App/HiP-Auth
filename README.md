@@ -29,8 +29,9 @@ HiP-Auth support token authentication built on .NET Core 1.0 with C# 6.0 using [
 ## Getting started
 
  * Clone the repository.
- * Update the database connection string & Admin user in the appsettings.json file.
- * `dotnet ef database update` seeds and updates your database.
+ * Create a new file "appsettings.Development.json" at "scr/Auth". (See "src/Auth/appsettings.Development.json.example")
+ * Update the new appsettings.Development.json file to match your needs.
+ * Run `dotnet ef database update` to update your database.
 
 ## How to develop
 
