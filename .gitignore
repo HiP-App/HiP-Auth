@@ -245,3 +245,4 @@ ModelManifest.xml
 .fake/
 
 appsettings.Development.json
+appsettings.Test.json
