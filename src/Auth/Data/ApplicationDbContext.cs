@@ -4,7 +4,7 @@ using OpenIddict;
 
 namespace Auth.Data
 {
-    public class ApplicationDbContext : OpenIddictContext<ApplicationUser>
+    public class ApplicationDbContext : OpenIddictDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
