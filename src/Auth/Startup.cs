@@ -1,6 +1,7 @@
 ﻿using Auth.Data;
 using Auth.Models;
 using Auth.Services;
+using Auth.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 
 namespace Auth
@@ -18,16 +20,10 @@ namespace Auth
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
 
-            if (env.IsDevelopment())
-            {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
-            }
-
-            builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
@@ -36,6 +32,15 @@ namespace Auth
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Read configurations from json
+            var appConfig = new AppConfig(Configuration);
+
+            // Register appConfig in Services 
+            services.AddSingleton(appConfig);
+
+            //Adding Cross Origin Requests 
+            services.AddCors();
+
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
@@ -44,13 +49,14 @@ namespace Auth
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            // Register the OpenIddict services, including the default Entity Framework stores.
-            services.AddOpenIddict<ApplicationUser, ApplicationDbContext>().Configure(options =>
-            {
-                // During development, you can disable the HTTPS requirement.
-                options.AllowInsecureHttp = true;
-                options.UseJwtTokens();
-            });                
+            // Add OpenIddict
+            services.AddOpenIddict<ApplicationUser, ApplicationDbContext>()
+                .Configure(options =>
+                {
+                    options.AllowInsecureHttp = appConfig.AllowInsecureHttp;
+                    options.UseJwtTokens();
+                });
+
 
             services.AddMvc();
 
@@ -60,10 +66,17 @@ namespace Auth
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider, ApplicationDbContext dbContext)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseCors(builder =>
+                // This will allow any request from any server. Tweak to fit your needs!
+                builder.AllowAnyHeader()
+                       .AllowAnyMethod()
+                       .AllowAnyOrigin()
+            );
 
             if (env.IsDevelopment())
             {
@@ -76,19 +89,26 @@ namespace Auth
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseIdentity();
-
             app.UseOpenIddict();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc();
+
+            // Seed Database with Administrator Account
+            app.SeedDbWithAdministrator();
         }
 
         public static void Main(string[] args)
         {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
             var host = new WebHostBuilder()
                 .UseKestrel()
+                .UseConfiguration(config)
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()

@@ -1,4 +1,4 @@
-﻿{
+{
   "userSecretsId": "aspnet-Auth-eb59e383-618e-4152-8bf2-28800a8d6272",
 
   "dependencies": {
@@ -35,7 +35,8 @@
     "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": {
       "version": "1.0.0-preview1-final",
       "type": "build"
-    }
+    },
+    "Microsoft.Extensions.Configuration.Binder": "1.0.0-rc2-final"
   },
 
   "tools": {

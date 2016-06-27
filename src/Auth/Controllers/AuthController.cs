@@ -1,6 +1,5 @@
 ﻿using Auth.Models;
 using Auth.Models.AuthViewModels;
-using Auth.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
