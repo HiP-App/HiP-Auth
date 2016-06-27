@@ -31,7 +31,7 @@ HiP-Auth support token authentication built on .NET Core 1.0 with C# 6.0 using [
  * Clone the repository.
  * Create a new file "appsettings.Development.json" at "scr/Auth". (See "src/Auth/appsettings.Development.json.example")
  * Update the new appsettings.Development.json file to match your needs.
- * Run `dotnet ef database update` to update your database.
+ * Navigate to `src\Auth` then run `dotnet ef database update` to update your database.
 
 ## How to develop
 
@@ -45,7 +45,9 @@ We are using [Visual Studio 2015](https://www.visualstudio.com/en-us/products/vs
 
 
 ## How to test
-navigate to test folder and run `dotnet test`.
+ * Create a new file "appsettings.Test.json" at "test/Auth.Tests". (See "test/Auth.Tests/appsettings.Test.json.example")
+ * Update the new appsettings.Test.json file to match your needs.
+ * Navigate to `test\Auth.Tests` then run `dotnet test` to update your database.
 
 
 ## How to submit Defects and Feature Proposals
