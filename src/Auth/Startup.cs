@@ -89,12 +89,12 @@ namespace Auth
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseOpenIddict();
-
-            app.UseOpenIdConnectServer(configuration =>
-            {
-                configuration.AllowInsecureHttp = app.ApplicationServices.GetRequiredService<AppConfig>().AllowInsecureHttp;
+            app.Use(next => context => {
+                var scheme = context.Request.Scheme;
+                return next(context);
             });
+
+            app.UseOpenIddict();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
