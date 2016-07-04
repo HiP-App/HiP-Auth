@@ -89,6 +89,11 @@ namespace Auth
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.Use(next => context => {
+                var scheme = context.Request.Scheme;
+                return next(context);
+            });
+
             app.UseOpenIddict();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
