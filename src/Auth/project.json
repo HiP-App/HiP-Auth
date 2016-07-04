@@ -93,8 +93,5 @@
 
   "scripts": {
     "postpublish": [ "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" ]
-  },
-  "commands": {
-    "Auth": "Microsoft.AspNet.Server.Kestrel --server.urls http://0.0.0.0:5001"
   }
 }
