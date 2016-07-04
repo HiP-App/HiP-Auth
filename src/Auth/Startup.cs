@@ -54,7 +54,6 @@ namespace Auth
                 .Configure(options =>
                 {
                     options.AllowInsecureHttp = appConfig.AllowInsecureHttp;
-                    options.UseJwtTokens();
                 });
 
 
