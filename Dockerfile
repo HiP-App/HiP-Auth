@@ -1,14 +1,10 @@
-FROM microsoft/dotnet:onbuild
+FROM microsoft/dotnet:latest
 
-RUN printf "deb http://ftp.us.debian.org/debian jessie main\n" >> /etc/apt/sources.list
+RUN mkdir -p /dotnetapp
+WORKDIR /dotnetapp/Auth
 
-EXPOSE 5000
+COPY src /dotnetapp
+RUN dotnet restore
 
-ENTRYPOINT ["dotnet", "run", "web"]
-
-COPY . /src/Auth
-WORKDIR /src/Auth
-
-RUN ["dotnet", "restore"]
-
+ENTRYPOINT ["dotnet", "run", "-p", "project.json"]
 
