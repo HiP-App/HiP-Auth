@@ -37,7 +37,8 @@
       "type": "build"
     },
     "Microsoft.Extensions.Configuration.Binder": "1.0.0",
-    "Microsoft.Extensions.DependencyInjection": "1.0.0"
+    "Microsoft.Extensions.DependencyInjection": "1.0.0",
+    "Microsoft.EntityFrameworkCore.Design": "1.0.0-preview2-final"
   },
 
   "tools": {
