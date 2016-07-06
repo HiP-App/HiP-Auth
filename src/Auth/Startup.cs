@@ -21,7 +21,7 @@ namespace Auth
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
@@ -43,7 +43,7 @@ namespace Auth
 
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(appConfig.ConnectionString.DefaultConnection));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -54,8 +54,8 @@ namespace Auth
                 .Configure(options =>
                 {
                     options.AllowInsecureHttp = appConfig.AllowInsecureHttp;
-                    options.UseJwtTokens();
-                });
+                })
+                .UseJsonWebTokens();
 
 
             services.AddMvc();
@@ -91,6 +91,11 @@ namespace Auth
 
             app.UseOpenIddict();
 
+            app.UseOpenIdConnectServer(configuration =>
+            {
+                configuration.AllowInsecureHttp = app.ApplicationServices.GetRequiredService<AppConfig>().AllowInsecureHttp;                
+            });
+
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc();
@@ -104,6 +109,8 @@ namespace Auth
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
+                .AddCommandLine(args)
+                .AddEnvironmentVariables()
                 .Build();
 
             var host = new WebHostBuilder()
