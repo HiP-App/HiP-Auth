@@ -1,65 +1,58 @@
 ﻿using System.Text;
 using Microsoft.Extensions.Configuration;
-using System;
 
 namespace Auth.Utility
 {
     public class AppConfig
     {
-        public bool AllowInsecureHttp { get; set; }
+        public DatabaseConfig DatabaseConfig { get; set; }
 
         public AdminCredentials AdminCredentials { get; set; }
 
-        public ConnectionString ConnectionString { get; set; }
+        public bool AllowInsecureHttp { get; set; }
 
         public AppConfig(IConfigurationRoot configuration)
         {
-            AllowInsecureHttp = configuration.GetValue<bool>("Configurations:AllowInsecureHttp");
-            
-            if (configuration.GetValue<string>("ADMIN_EMAIL") != null)
+            DatabaseConfig = new DatabaseConfig
             {
-                AdminCredentials = new AdminCredentials
-                {
-                    Email = configuration.GetValue<string>("ADMIN_EMAIL"),
-                    Password = configuration.GetValue<string>("ADMIN_PASSWORD")
-                };
-            }
-            else
-            {
-                AdminCredentials = new AdminCredentials
-                {
-                    Email = configuration.GetValue<string>("Configurations:Admin:Email"),
-                    Password = configuration.GetValue<string>("Configurations:Admin:Password")
-                };
-            }
+                Host = configuration.GetValue<string>("DB_HOST"),
+                Username = configuration.GetValue<string>("DB_USERNAME"),
+                Password = configuration.GetValue<string>("DB_PASSWORD"),
+                Name = configuration.GetValue<string>("DB_NAME")
+            };
 
-            if (configuration.GetValue<string>("DB_HOST") != null)
+            AdminCredentials = new AdminCredentials
             {
-                StringBuilder connectionString = new StringBuilder("Host = " + configuration.GetValue<string>("DB_HOST") + ";");
-                connectionString.Append("Password="+ configuration.GetValue<string>("DB_PASSWORD") + ";");
-                connectionString.Append("Username=" + configuration.GetValue<string>("DB_USER") + ";");
-                connectionString.Append("Database=" + configuration.GetValue<string>("DB_NAME"));
-                ConnectionString = new ConnectionString
-                {
-                    DefaultConnection = connectionString.ToString()
-                };
-            }
-            else
-            {
-                ConnectionString = new ConnectionString
-                {
-                    DefaultConnection = configuration.GetValue<string>("ConnectionStrings:DefaultConnection"),
-                };
-            }
-            // Log
-            Console.WriteLine(ConnectionString.DefaultConnection);
-            Console.WriteLine(AdminCredentials.Email);
+                Email = configuration.GetValue<string>("ADMIN_EMAIL"),
+                Password = configuration.GetValue<string>("ADMIN_PASSWORD")
+            };
+
+            AllowInsecureHttp = configuration.GetValue<bool>("ALLOW_HTTP");
         }
     }
 
-    public class ConnectionString
+    public class DatabaseConfig
     {
-        public string DefaultConnection { get; set; }
+        public string Name { get; set; }
+
+        public string Host { get; set; }
+
+        public string Username { get; set; }
+
+        public string Password { get; set; }
+
+        public string ConnectionString { 
+            get {
+                StringBuilder connectionString = new StringBuilder();
+                
+                connectionString.Append($"Host={Host};");
+                connectionString.Append($"Username={Username};");
+                connectionString.Append($"Password={Password};");
+                connectionString.Append($"Database={Name}");
+                
+                return connectionString.ToString();
+            }
+        }
     }
 
     public class AdminCredentials
