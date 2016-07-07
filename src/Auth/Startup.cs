@@ -21,7 +21,7 @@ namespace Auth
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
@@ -43,7 +43,7 @@ namespace Auth
 
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(appConfig.ConnectionString.DefaultConnection));
+                options.UseNpgsql(appConfig.DatabaseConfig.ConnectionString));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -100,8 +100,8 @@ namespace Auth
 
             app.UseMvc();
 
-            // Seed Database with Administrator Account
-            app.SeedDbWithAdministrator();
+            // Run all pending Migrations and Seed DB with initial data
+            app.RunMigrationsAndSeedDb();
         }
 
         public static void Main(string[] args)
@@ -109,8 +109,6 @@ namespace Auth
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
-                .AddCommandLine(args)
-                .AddEnvironmentVariables()
                 .Build();
 
             var host = new WebHostBuilder()

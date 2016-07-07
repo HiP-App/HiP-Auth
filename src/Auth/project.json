@@ -38,9 +38,7 @@
     },
     "Microsoft.Extensions.Configuration.Binder": "1.0.0",
     "Microsoft.Extensions.DependencyInjection": "1.0.0",
-    "Microsoft.EntityFrameworkCore.Design": "1.0.0-preview2-final",
-    "Microsoft.Extensions.Configuration.CommandLine": "1.0.0",
-    "System.Runtime": "4.1.0"
+    "Microsoft.EntityFrameworkCore.Design": "1.0.0-preview2-final"
   },
 
   "tools": {
@@ -62,6 +60,10 @@
         "portable-net45+win8+dnxcore50",
         "portable-net45+win8"
       ]
+    },
+    "Microsoft.DotNet.Watcher.Tools": {
+      "version": "1.0.0-*",
+      "imports": "portable-net451+win8"
     }
   },
 
