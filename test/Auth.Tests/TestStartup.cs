@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Auth.Data;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Auth.Tests
@@ -15,6 +17,7 @@ namespace Auth.Tests
             base.ConfigureServices(services);
 
             // Register here the dependency injection services.
+            services.AddDbContext<ApplicationDbContext>(opts => opts.UseInMemoryDatabase());
         }
     }
 }

@@ -1,13 +1,13 @@
 ﻿{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Username=postgres;Password=postgres;Database=hipTestauthdb"
-  },
+  // Database Configurations
+  "DB_HOST": "localhost",
+  "DB_USERNAME": "postgres",
+  "DB_PASSWORD": "postgres",
+  "DB_NAME": "hipauthdb",
 
-  "Configurations": {
-    "AllowInsecureHttp": true,
-    "Admin": {
-      "Email": "admin@hipapp.de",
-      "Password": "Hipcms@123"
-    }
-  }
+  // Admin Credentials
+  "ADMIN_EMAIL": "admin@hipapp.de",
+  "ADMIN_PASSWORD": "Hipcms@123",
+
+  "ALLOW_HTTP": true
 }
