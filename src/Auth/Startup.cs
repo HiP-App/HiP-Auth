@@ -55,6 +55,9 @@ namespace Auth
                 {
                     options.AllowInsecureHttp = appConfig.AllowInsecureHttp;
                 })
+                .EnableTokenEndpoint("/auth/login")
+                .AllowPasswordFlow()
+                .AllowRefreshTokenFlow()
                 .UseJsonWebTokens();
 
 
