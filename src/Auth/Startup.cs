@@ -58,7 +58,8 @@ namespace Auth
                 .EnableTokenEndpoint("/auth/login")
                 .AllowPasswordFlow()
                 .AllowRefreshTokenFlow()
-                .UseJsonWebTokens();
+                .UseJsonWebTokens()
+                .AddEphemeralSigningKey(); // TODO: To be replaced with sign in certificate for production            
 
 
             services.AddMvc();
@@ -91,13 +92,8 @@ namespace Auth
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
-            app.UseOpenIddict();
-
-            app.UseOpenIdConnectServer(configuration =>
-            {
-                configuration.AllowInsecureHttp = app.ApplicationServices.GetRequiredService<AppConfig>().AllowInsecureHttp;                
-            });
+            
+            app.UseOpenIddict();            
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
