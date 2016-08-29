@@ -5,6 +5,10 @@
   "DB_PASSWORD": "postgres",
   "DB_NAME": "hipauthdb",
 
+  // Auth Configurations
+  "CLIENT_ID": "HiP-CmsWebApiClientId",
+  "DOMAIN": "http://localhost:5001/",
+  
   // Admin Credentials
   "ADMIN_EMAIL": "admin@hipapp.de",
   "ADMIN_PASSWORD": "Hipcms@123",

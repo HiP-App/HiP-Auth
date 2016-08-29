@@ -2,14 +2,15 @@
 using Auth.Models;
 using Auth.Services;
 using Auth.Utility;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 using System.IO;
 
 namespace Auth
@@ -70,7 +71,7 @@ namespace Auth
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider, ApplicationDbContext dbContext)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, AppConfig appConfig)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -96,6 +97,28 @@ namespace Auth
             app.UseOpenIddict();            
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+
+            app.UseJwtBearerAuthentication(new JwtBearerOptions
+            {
+                Audience = appConfig.AuthConfig.ClientId,
+                Authority = appConfig.AuthConfig.Domain,
+                AutomaticChallenge = true,
+                AutomaticAuthenticate = true,
+                RequireHttpsMetadata = !appConfig.AllowInsecureHttp,
+                
+                Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        return Task.FromResult(0);
+                    },
+
+                    OnTokenValidated = context =>
+                    {
+                        return Task.FromResult(0);
+                    }
+                }
+            });
 
             app.UseMvc();
 
