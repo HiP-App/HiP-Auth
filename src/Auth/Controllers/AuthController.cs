@@ -28,7 +28,7 @@ namespace Auth.Controllers
             _logger = loggerFactory.CreateLogger<AuthController>();
         }
 
-        // POST: /Account/Register
+        // POST: /Auth/Register
         [HttpPost]
         [AllowAnonymous]
         [Route("auth/register")]
@@ -58,7 +58,7 @@ namespace Auth.Controllers
             return BadRequest(ModelState);
         }
 
-        // GET: /Account/ConfirmEmail
+        // GET: /Auth/ConfirmEmail
         [HttpGet]
         [AllowAnonymous]
         [Route("auth/ConfirmEmail")]
@@ -75,7 +75,7 @@ namespace Auth.Controllers
             return Ok(result.Succeeded);
         }
 
-        // POST: /Account/ForgotPassword
+        // POST: /Auth/ForgotPassword
         [HttpPost]
         [AllowAnonymous]
         [Route("auth/ForgotPassword")]
@@ -102,7 +102,7 @@ namespace Auth.Controllers
             return BadRequest();
         }
 
-        // GET: /Account/ResetPassword
+        // GET: /Auth/ResetPassword
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ResetPassword(string code = null)
@@ -111,7 +111,7 @@ namespace Auth.Controllers
         }
 
         //
-        // POST: /Account/ResetPassword
+        // POST: /Auth/ResetPassword
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
@@ -135,6 +135,33 @@ namespace Auth.Controllers
 
             return BadRequest(ModelState);
         }
+
+        //
+        // PUT: /Auth/ChangePassword
+        [HttpPut]
+        [Route("auth/changePassword")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await GetCurrentUserAsync();
+                if (user != null)
+                {
+                    var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation(3, "User changed their password successfully.");
+                        return Ok();
+                    }
+
+                    AddErrors(result);
+                }
+            }
+
+            return BadRequest(ModelState);
+        }
+
 
         #region Helpers
 

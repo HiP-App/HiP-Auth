@@ -7,6 +7,8 @@ namespace Auth.Utility
     {
         public DatabaseConfig DatabaseConfig { get; set; }
 
+        public AuthConfig AuthConfig { get; set; }
+
         public AdminCredentials AdminCredentials { get; set; }
 
         public bool AllowInsecureHttp { get; set; }
@@ -19,6 +21,12 @@ namespace Auth.Utility
                 Username = configuration.GetValue<string>("DB_USERNAME"),
                 Password = configuration.GetValue<string>("DB_PASSWORD"),
                 Name = configuration.GetValue<string>("DB_NAME")
+            };
+
+            AuthConfig = new AuthConfig 
+            {
+                ClientId = configuration.GetValue<string>("CLIENT_ID"),
+                Domain = configuration.GetValue<string>("DOMAIN")
             };
 
             AdminCredentials = new AdminCredentials
@@ -60,5 +68,12 @@ namespace Auth.Utility
         public string Email { get; set; }
 
         public string Password { get; set; }
+    }
+
+    public class AuthConfig
+    {
+        public string ClientId { get; set; }
+
+        public string Domain { get; set; }
     }
 }
