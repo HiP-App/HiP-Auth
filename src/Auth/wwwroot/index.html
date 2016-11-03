@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>HiP Auth</title>
+</head>
+<body>
+    <form id="login-form">
+        <input type="text" name="username" placeholder="E-Mail" />
+        <input type="password" name="password" placeholder="Password" />
+        <input type="text" name="secret" placeholder="Secret" />
+        <input type="button" value="Submit" onclick="OnSubmit()"/>
+    </form>
+    <form id="result" hidden >
+        <textarea name="token" id="token" rows="10" cols="50"></textarea> <input type="button" onclick="Copy('token')" value="Copy token"/> <br />
+        <textarea name="refresh" id="refresh" rows="10" cols="50"></textarea> <input type="button" onclick="Copy('refresh')" value="Copy refresh token" /> <br />
+    </form>
+    <script>
+        function OnSubmit() {
+            login = document.getElementById("login-form");
+            var username = login.username.value;
+            var password = login.password.value;
+            var resource = login.secret.value;
+
+            console.log(username + ", " + password);
+            var grant_type = 'password';
+            var scope = 'offline_access profile email';
+
+            var req = new XMLHttpRequest();
+
+            var urlEncodedData = 'username=' + username + '&password=' + password + '&grant_type=' +
+                grant_type + '&resource=' + resource + '&scope=' + scope;
+
+            req.addEventListener('load', function (event) {
+                result = document.getElementById('result')
+                response = JSON.parse(event.target.response);
+                result.token.value = response.token_type + " " + response.access_token;
+                result.refresh.value = response.token_type + " " + response.refresh_token;
+                result.hidden = false;
+            });
+            req.open("POST", "/auth/login");
+            req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            req.send(urlEncodedData);
+        }
+
+        function Copy(id) {
+            var result = document.getElementById(id);
+            result.select();
+
+            var successful = document.execCommand('copy');
+            console.log(successful ? "token copied" : "error copying token");
+        }
+    </script>
+</body>
+</html>
