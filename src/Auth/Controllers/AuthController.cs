@@ -1,13 +1,10 @@
-﻿using Api.Utility;
-using Auth.Models;
+﻿using Auth.Models;
 using Auth.Models.AuthViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using System;
-using System.Text;
 using Auth.Utility;
 
 namespace Auth.Controllers
