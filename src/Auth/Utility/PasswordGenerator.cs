@@ -4,12 +4,12 @@ using System.Text;
 public class PasswordGenerator
 {
     private char[] characterArray;
-    private Int32 passwordLength = 8;
+    private int passwordLength = 6;
     private Random randNum;
 
     public PasswordGenerator()
     {
-        characterArray = "abcdefghijklmnopqrstuvwxyz!@$ABCDEFGHIJKLMNOPQRSTUVWXYZ!@$0123456789".ToCharArray();
+        characterArray = "abcdefghijklmnopqrstuvwxyz!@$#ABCDEFGHIJKLMNOPQRSTUVWXYZ#!@$0123456789".ToCharArray();
         randNum = new Random();
     }
 
@@ -17,12 +17,14 @@ public class PasswordGenerator
     {
         StringBuilder sb = new StringBuilder();
         sb.Capacity = passwordLength;
-        for (int count = 0; count <= passwordLength - 1; count++)
+        string appendForPasswordValidity = "A@1z";
+        for (int count = 0; count <= passwordLength; count++)
         {
             sb.Append(GetRandomCharacter());
         }
         if ((sb != null))
         {
+            sb.Append(appendForPasswordValidity);
             return sb.ToString();
         }
         return string.Empty;

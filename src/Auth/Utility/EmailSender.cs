@@ -20,9 +20,9 @@ namespace Auth.Utility
             bodyHtml = bodyHtml.Replace(@"{email}", email);
 
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("History in Paderborn", "noreply@hipapp.de"));
+            message.From.Add(new MailboxAddress("History in Paderborn", smtp.From));
             message.To.Add(new MailboxAddress("", email));
-            message.Subject = "History in Paderborn App Neue Passwort";
+            message.Subject = "Neues Password für die History in Paderborn App";
             message.Body = new TextPart("html")
             {
                 Text = bodyHtml
@@ -38,12 +38,6 @@ namespace Auth.Utility
                 // Note: since we don't have an OAuth2 token, disable
                 // the XOAUTH2 authentication mechanism.
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
-
-                // Note: only needed if the SMTP server requires authentication
-                if (!(smtp.Password == null || smtp.Password == ""))
-                {
-                    client.Authenticate(smtp.User, smtp.Password);
-                }
 
                 client.Send(message);
                 client.Disconnect(true);

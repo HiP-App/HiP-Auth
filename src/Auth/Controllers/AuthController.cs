@@ -85,12 +85,13 @@ namespace Auth.Controllers
             {
                 var user = await _userManager.FindByNameAsync(model.Email);
 
-                if (user != null && (await _userManager.IsEmailConfirmedAsync(user)))
+                if (user != null)
                 {
                     var password = passwordGenerator.Generate();
                     if(password != null)
                     {
-                        var result = await _userManager.ResetPasswordAsync(user, model.Email, password);
+                        var removePassword = await _userManager.RemovePasswordAsync(user);
+                        var result = await _userManager.AddPasswordAsync(user, password);
                         if (result.Succeeded)
                         {
                             try
