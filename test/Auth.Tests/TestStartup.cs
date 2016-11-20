@@ -17,7 +17,7 @@ namespace Auth.Tests
             base.ConfigureServices(services);
 
             // Register here the dependency injection services.
-            services.AddDbContext<ApplicationDbContext>(opts => opts.UseInMemoryDatabase());
+            // services.AddDbContext<ApplicationDbContext>(opts => opts.UseInMemoryDatabase());
         }
     }
 }
