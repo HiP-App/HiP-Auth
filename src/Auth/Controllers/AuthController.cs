@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using Auth.Utility;
 
 namespace Auth.Controllers
 {
@@ -12,20 +13,19 @@ namespace Auth.Controllers
     public class AuthController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        //private readonly IEmailSender _emailSender;
-        //private readonly ISmsSender _smsSender;
+        private EmailSender emailSender;
         private readonly ILogger _logger;
+        private PasswordGenerator passwordGenerator;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
-            //IEmailSender emailSender,
-            //ISmsSender smsSender,
+            EmailSender emailSender,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
-            //_emailSender = emailSender;
-            //_smsSender = smsSender;
+            this.emailSender = emailSender;
             _logger = loggerFactory.CreateLogger<AuthController>();
+            passwordGenerator = new PasswordGenerator();
         }
 
         // POST: /Auth/Register
@@ -85,21 +85,37 @@ namespace Auth.Controllers
             {
                 var user = await _userManager.FindByNameAsync(model.Email);
 
-                if (user != null && (await _userManager.IsEmailConfirmedAsync(user)))
+                if (user != null)
                 {
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                    // Send an email with this link
-                    //var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    //var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    //await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                    //   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
-                    //return View("ForgotPasswordConfirmation");
+                    var password = passwordGenerator.Generate();
+                    if(password != null)
+                    {
+                        var removePassword = await _userManager.RemovePasswordAsync(user);
+                        var result = await _userManager.AddPasswordAsync(user, password);
+                        if (result.Succeeded)
+                        {
+                            try
+                            {
+                                await emailSender.InviteAsync(model.Email, password);
+                            }
 
-                    return Ok();
+                            //Error while sending email                        
+                            catch (MailKit.Net.Smtp.SmtpCommandException SmtpError)
+                            {
+                                _logger.LogDebug(SmtpError.ToString());
+                                // 503 - Service Unavailable
+                                return new StatusCodeResult(503);
+                            }
+
+                            // 202 - Accepted (Emails get send async, so we cannot guarantee that emails are send)
+                            return new StatusCodeResult(202);
+                        }
+                        AddErrors(result);
+                    }                                        
                 }
             }
             
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         // GET: /Auth/ResetPassword
@@ -179,5 +195,6 @@ namespace Auth.Controllers
         }
 
         #endregion
+
     }
 }
