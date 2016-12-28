@@ -1,6 +1,6 @@
 HiP-Auth
 ======
-HiP-Auth is an Authentication and Authorization service built and maintained by [HiPCMS](https://github.com/HiP-App/HiP-CmsWebApi) which is a content management system developed by the project group [History in 
+HiP-Auth is an authentication and authorization service built and maintained by [HiPCMS](https://github.com/HiP-App/HiP-CmsWebApi) which is a content management system developed by the project group [History in 
 Paderborn](http://is.uni-paderborn.de/fachgebiete/fg-engels/lehre/ss15/hip-app/pg-hip-app.html).
 
 HiP-Auth is currently acting as a microservice for HiPCMS. Nevertheless it can be consumed by any application which requires token based authentication.
@@ -27,9 +27,9 @@ HiP-CmsWebApi is a REST API built on .NET Core 1.0 with C# 6.0. Below are the re
  * Update the new `appsettings.Development.json` file to match your needs.
  * To run using Visual Studio, just start the app with/without debugging.
  * To run through terminal,
-  * Navigate to `src\Auth`
-  * Set Environment Varriable `ASPNETCORE_ENVIRONMENT=Development`
-  * Execute `dotnet run`
+  * Navigate to `src\Auth`.
+  * Set Environment Varriable `ASPNETCORE_ENVIRONMENT=Development`.
+  * Execute `dotnet run`.
 
 ## How to develop
 
@@ -39,7 +39,7 @@ HiP-CmsWebApi is a REST API built on .NET Core 1.0 with C# 6.0. Below are the re
      Confluence](http://atlassian-hip.cs.upb.de:8090/display/DCS/Conventions+for+git)
 
 ## How to test
- * Create a new file "appsettings.Test.json" at "test/Auth.Tests". (See "test/Auth.Tests/appsettings.Test.json.example")
+ * Create a new file "appsettings.Test.json" at "test/Auth.Tests". (See "test/Auth.Tests/appsettings.Test.json.example").
  * Update the new appsettings.Test.json file to match your needs.
  * Navigate to `test\Auth.Tests` then run `dotnet test`.
 
@@ -56,7 +56,8 @@ this README, just [send an email](mailto:hip-app@campus.upb.de).
 
 ## Contact
 
-> HiP (History in Paderborn) ist eine Plattform der:
+HiP (History in Paderborn) ist eine Plattform der:
+
 > Universität Paderborn
 > Warburger Str. 100
 > 33098 Paderborn
