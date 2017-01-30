@@ -1,6 +1,5 @@
 ﻿using Auth.Data;
 using Auth.Models;
-using Auth.Services;
 using Auth.Utility;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Auth
 {
@@ -62,12 +62,7 @@ namespace Auth
                 .UseJsonWebTokens()
                 .AddEphemeralSigningKey(); // TODO: To be replaced with sign in certificate for production            
 
-
             services.AddMvc();
-
-            // Add application services.
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<ISmsSender, AuthMessageSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,8 +88,8 @@ namespace Auth
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            
-            app.UseOpenIddict();            
+
+            app.UseOpenIddict();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
@@ -104,8 +99,8 @@ namespace Auth
                 Authority = appConfig.AuthConfig.Domain,
                 AutomaticChallenge = true,
                 AutomaticAuthenticate = true,
-                RequireHttpsMetadata = !appConfig.AllowInsecureHttp,
-                
+                RequireHttpsMetadata = env.IsProduction(),
+
                 Events = new JwtBearerEvents
                 {
                     OnAuthenticationFailed = context =>
@@ -134,11 +129,18 @@ namespace Auth
                 .AddJsonFile("appsettings.json")
                 .Build();
 
+            // Only a hack, to get the service running https!
+            var pwd = "password";
+            var suppliers = new[] { "CN=localhost, OU=SupplierId, OU=HipScheme, O=OrgX, C=GB" };
+            var cb = new X509CertBuilder(suppliers, "CN=HiP Admin, OU=hipcms, O=History in Paderborn, C=DE");
+            var cert = cb.MakeCertificate(pwd, "CN=C001, OU=History in Paderborn, OU=HipScheme, O=History in Paderborn, C=DE", 2);
+
+            File.WriteAllBytes("cert.pfx", cert.Export(X509ContentType.Pkcs12, pwd));
+
             var host = new WebHostBuilder()
-                .UseKestrel()
+                .UseKestrel(cfg => cfg.UseHttps("cert.pfx", pwd))
                 .UseConfiguration(config)
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
                 .UseStartup<Startup>()
                 .Build();
 
