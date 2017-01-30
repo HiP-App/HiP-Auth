@@ -38,7 +38,7 @@
                 result.refresh.value = response.token_type + " " + response.refresh_token;
                 result.hidden = false;
             });
-            req.open("POST", "/auth/login");
+            req.open("POST", "./auth/login");
             req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             req.send(urlEncodedData);
         }
