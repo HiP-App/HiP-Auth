@@ -37,7 +37,7 @@ namespace Auth.Utility
                 _generalNames[t] = new GeneralName(new X509Name(validWithDomainNames[t]));
             }
         }
-
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
         public X509Certificate2 MakeCertificate(string password, string issuedToDomainName, int validYears)
         {
             _certificateGenerator.Reset();
@@ -68,6 +68,7 @@ namespace Auth.Utility
 
             _certificateGenerator.SetPublicKey(subjectKeyPair.Public);
             var issuerKeyPair = subjectKeyPair;
+
             var certificate = _certificateGenerator.Generate(issuerKeyPair.Private, _random);
 
             var store = new Pkcs12Store();
@@ -82,5 +83,6 @@ namespace Auth.Utility
                 return new X509Certificate2(stream.ToArray(), password, X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
             }
         }
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
     }
 }

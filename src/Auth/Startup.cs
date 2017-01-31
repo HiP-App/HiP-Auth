@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
+using System;
 
 namespace Auth
 {
@@ -26,11 +27,13 @@ namespace Auth
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
+            HostingEnvironment = env;
         }
 
         public IConfigurationRoot Configuration { get; }
+        public IHostingEnvironment HostingEnvironment { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+                // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             // Read configurations from json
@@ -54,7 +57,7 @@ namespace Auth
             services.AddOpenIddict<ApplicationUser, ApplicationDbContext>()
                 .Configure(options =>
                 {
-                    options.AllowInsecureHttp = appConfig.AllowInsecureHttp;
+                    options.AllowInsecureHttp = HostingEnvironment.IsDevelopment();
                 })
                 .EnableTokenEndpoint("/auth/login")
                 .AllowPasswordFlow()
@@ -129,22 +132,33 @@ namespace Auth
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            // Only a hack, to get the service running https!
-            var pwd = "password";
-            var suppliers = new[] { "CN=localhost, OU=SupplierId, OU=HipScheme, O=OrgX, C=GB" };
-            var cb = new X509CertBuilder(suppliers, "CN=HiP Admin, OU=hipcms, O=History in Paderborn, C=DE");
-            var cert = cb.MakeCertificate(pwd, "CN=C001, OU=History in Paderborn, OU=HipScheme, O=History in Paderborn, C=DE", 2);
 
-            File.WriteAllBytes("cert.pfx", cert.Export(X509ContentType.Pkcs12, pwd));
 
             var host = new WebHostBuilder()
-                .UseKestrel(cfg => cfg.UseHttps("cert.pfx", pwd))
                 .UseConfiguration(config)
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseStartup<Startup>()
-                .Build();
+                .UseStartup<Startup>();
 
-            host.Run();
+            if (string.Equals("Development", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")))
+            {
+                host
+                    .UseKestrel()
+                    .UseUrls("http://0.0.0.0:5001");
+            }
+            else
+            {
+                // Only a hack, to get the service running https! Create a fake certificate for nginx
+                var pwd = "password";
+                var suppliers = new[] { "CN=localhost, OU=SupplierId, OU=HipScheme, O=OrgX, C=GB" };
+                var cb = new X509CertBuilder(suppliers, "CN=HiP Admin, OU=hipcms, O=History in Paderborn, C=DE");
+                var cert = cb.MakeCertificate(pwd, "CN=C001, OU=History in Paderborn, OU=HipScheme, O=History in Paderborn, C=DE", 2);
+
+                File.WriteAllBytes("cert.pfx", cert.Export(X509ContentType.Pkcs12, pwd));
+                host
+                    .UseKestrel(cfg => cfg.UseHttps("cert.pfx", pwd))
+                    .UseUrls("https://0.0.0.0:5001");
+            }
+            host.Build().Run();
         }
     }
 }
