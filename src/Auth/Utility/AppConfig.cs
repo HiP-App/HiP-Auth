@@ -11,8 +11,6 @@ namespace Auth.Utility
 
         public AdminCredentials AdminCredentials { get; set; }
 
-        public bool AllowInsecureHttp { get; set; }
-
         public AppConfig(IConfigurationRoot configuration)
         {
             DatabaseConfig = new DatabaseConfig
@@ -34,8 +32,6 @@ namespace Auth.Utility
                 Email = configuration.GetValue<string>("ADMIN_EMAIL"),
                 Password = configuration.GetValue<string>("ADMIN_PASSWORD")
             };
-
-            AllowInsecureHttp = configuration.GetValue<bool>("ALLOW_HTTP");
         }
     }
 
