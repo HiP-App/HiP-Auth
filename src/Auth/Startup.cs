@@ -102,8 +102,8 @@ namespace Auth
                 Authority = appConfig.AuthConfig.Domain,
                 AutomaticChallenge = true,
                 AutomaticAuthenticate = true,
-                RequireHttpsMetadata = env.IsProduction(),
-
+                //RequireHttpsMetadata = env.IsProduction(),
+                RequireHttpsMetadata = false,
                 Events = new JwtBearerEvents
                 {
                     OnAuthenticationFailed = context =>
