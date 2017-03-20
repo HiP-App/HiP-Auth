@@ -12,19 +12,13 @@ namespace Auth.Controllers
     public class AuthController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        //private readonly IEmailSender _emailSender;
-        //private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
-            //IEmailSender emailSender,
-            //ISmsSender smsSender,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
-            //_emailSender = emailSender;
-            //_smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AuthController>();
         }
 
