@@ -7,5 +7,5 @@ WORKDIR /dotnetapp
 EXPOSE 5001
 
 WORKDIR /dotnetapp/Auth
-RUN dotnet restore
+RUN dotnet restore --no-cache
 ENTRYPOINT ["dotnet", "run"]
