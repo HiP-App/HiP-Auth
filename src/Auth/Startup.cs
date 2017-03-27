@@ -13,6 +13,10 @@ using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System;
+using System.Threading;
+using AspNet.Security.OpenIdConnect.Primitives;
+using OpenIddict.Core;
+using OpenIddict.Models;
 
 namespace Auth
 {
@@ -33,7 +37,7 @@ namespace Auth
         public IConfigurationRoot Configuration { get; }
         public IHostingEnvironment HostingEnvironment { get; }
 
-                // This method gets called by the runtime. Use this method to add services to the container.
+        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             // Read configurations from json
@@ -47,24 +51,34 @@ namespace Auth
 
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(appConfig.DatabaseConfig.ConnectionString));
+            {
+                options.UseNpgsql(appConfig.DatabaseConfig.ConnectionString);
+                options.UseOpenIddict();
+            });
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            // Add OpenIddict
-            services.AddOpenIddict<ApplicationUser, ApplicationDbContext>()
-                .Configure(options =>
-                {
-                    options.AllowInsecureHttp = HostingEnvironment.IsDevelopment();
-                })
-                .EnableTokenEndpoint("/auth/login")
-                .AllowPasswordFlow()
-                .AllowRefreshTokenFlow()
-                .UseJsonWebTokens()
-                .AddEphemeralSigningKey(); // TODO: To be replaced with sign in certificate for production            
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.ClaimsIdentity.UserNameClaimType = OpenIdConnectConstants.Claims.Name;
+                options.ClaimsIdentity.UserIdClaimType = OpenIdConnectConstants.Claims.Subject;
+                options.ClaimsIdentity.RoleClaimType = OpenIdConnectConstants.Claims.Role;
+            });
 
+            // Add OpenIddict
+            services.AddOpenIddict(options =>
+                {
+                    options.DisableHttpsRequirement();
+
+                    options.EnableTokenEndpoint("/auth/login");
+                    options.AllowPasswordFlow();
+                    options.AllowRefreshTokenFlow();
+                    options.UseJsonWebTokens();
+                    options.AddEphemeralSigningKey(); // TODO: To be replaced with sign in certificate for production  
+                }
+                );
             services.AddMvc();
         }
 
