@@ -71,12 +71,13 @@ namespace Auth
             services.AddOpenIddict(options =>
                 {
                     options.DisableHttpsRequirement();
-
+                    options.AddEntityFrameworkCoreStores<ApplicationDbContext>();
                     options.EnableTokenEndpoint("/auth/login");
                     options.AllowPasswordFlow();
                     options.AllowRefreshTokenFlow();
                     options.UseJsonWebTokens();
                     options.AddEphemeralSigningKey(); // TODO: To be replaced with sign in certificate for production  
+                    options.AddMvcBinders();
                 }
                 );
             services.AddMvc();
@@ -106,6 +107,8 @@ namespace Auth
                 app.UseExceptionHandler("/Home/Error");
             }
 
+
+            //app.UseOAuthValidation();
             app.UseOpenIddict();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
@@ -133,10 +136,13 @@ namespace Auth
             });
 
             app.UseMvc();
+            app.UseMvcWithDefaultRoute();
 
             // Run all pending Migrations and Seed DB with initial data
             app.RunMigrationsAndSeedDb();
             app.UseStaticFiles();
+
+            InitializeAsync(app.ApplicationServices, CancellationToken.None).GetAwaiter().GetResult();
         }
 
         public static void Main(string[] args)
@@ -173,6 +179,29 @@ namespace Auth
                     .UseUrls("https://0.0.0.0:5001");
             }
             host.Build().Run();
+        }
+
+        private async Task InitializeAsync(IServiceProvider services, CancellationToken cancellationToken)
+        {
+            // Create a new service scope to ensure the database context is correctly disposed when this methods returns.
+            using (var scope = services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await context.Database.EnsureCreatedAsync();
+
+                var manager = scope.ServiceProvider.GetRequiredService<OpenIddictApplicationManager<OpenIddictApplication>>();
+
+                if (await manager.FindByClientIdAsync("console", cancellationToken) == null)
+                {
+                    var application = new OpenIddictApplication
+                    {
+                        ClientId = "console",
+                        DisplayName = "My client application"
+                    };
+
+                    await manager.CreateAsync(application, "388D45FA-B36B-4988-BA59-B187D329C207", cancellationToken);
+                }
+            }
         }
     }
 }
