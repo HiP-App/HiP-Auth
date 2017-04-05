@@ -46,10 +46,6 @@ HiP-CmsWebApi is a REST API built on .NET Core 1.1 with C# 6.0. Below are the re
 
 Please write an email to [hip-app@campus.upb.de](mailto:hip-app@campus.upb.de).
 
-## Documentation
-
-If something is missing in  this README, just [send an email](mailto:hip-app@campus.upb.de).
-
 ## Contact
 
 HiP (History in Paderborn) ist eine Plattform der:
