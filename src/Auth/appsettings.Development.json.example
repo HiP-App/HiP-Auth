@@ -11,7 +11,7 @@
   
   // Admin Credentials
   "ADMIN_EMAIL": "admin@hipapp.de",
-  "ADMIN_PASSWORD": "Hipcms@123",
+  "ADMIN_PASSWORD": "admin",
 
   "ALLOW_HTTP": true
 }
